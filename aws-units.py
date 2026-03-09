@@ -274,8 +274,7 @@ class SentinelOneCNSAWSUnitAudit:
                 service="s3api",
                 api="list-buckets",
                 paginate=False,
-                query="\"Buckets[].Name\"",
-                region=self.regions[0]),
+                query="\"Buckets[].Name\""),
             universal_newlines=True, shell=True, stderr=subprocess.STDOUT
         )
         j = json.loads(output)
