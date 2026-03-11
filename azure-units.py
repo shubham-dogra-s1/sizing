@@ -81,6 +81,8 @@ class SentinelOneCNSAzureUnitAudit:
         self.count("Azure Container Instances (ACI)", self.count_container_instances, workload_multiplier=0.1)
         self.count("Azure Blob Storage Container", self.count_blob_containers, workload_multiplier=0.2)
         self.count("Azure SQL Instance", self.count_sql_instances, workload_multiplier=1)
+        self.count("Azure MySQL Flexible Server", self.count_mysql_flexible_servers, workload_multiplier=1)
+        self.count("Azure PostgreSQL Flexible Server", self.count_postgres_flexible_servers, workload_multiplier=1)
 
         self.add_result("Total Resource", self.total_resource_count, round(self.total_workload_count))
         print("[Info] Results stored at", self.file_path)
@@ -167,6 +169,18 @@ class SentinelOneCNSAzureUnitAudit:
                 print("[Error] [Command]", e.cmd)
                 print("[Error] [Command-Output]", e.output)
         return total_dbs
+
+    def count_mysql_flexible_servers(self):
+        output = call_with_output(
+            f"az mysql flexible-server list {self.subscription_flag} --output json --only-show-errors"
+        )
+        servers = json.loads(output)
+        return len(servers)
+
+    def count_postgres_flexible_servers(self):
+        output = call_with_output(f"az postgres flexible-server list {self.subscription_flag} --output json --only-show-errors")
+        servers = json.loads(output)
+        return len(servers)
 
 
 if __name__ == '__main__':
